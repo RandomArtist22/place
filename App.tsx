@@ -1,66 +1,39 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { CANVAS_WIDTH, CANVAS_HEIGHT, COLORS } from './constants';
+import React, { useState, useCallback } from 'react';
+import { CANVAS_WIDTH, CANVAS_HEIGHT, COLORS, COOLDOWN_SECONDS } from './constants';
 import Canvas from './components/Canvas';
 import Controls from './components/Controls';
 import { PencilIcon } from './components/Icons';
 
 const App: React.FC = () => {
-  const [pixels, setPixels] = useState<string[]>([]);
+  const [pixels, setPixels] = useState<string[]>(() =>
+    Array(CANVAS_WIDTH * CANVAS_HEIGHT).fill('#FFFFFF')
+  );
   const [selectedColor, setSelectedColor] = useState<string>(COLORS[0]);
+  const [cooldownEndTime, setCooldownEndTime] = useState<number>(0);
   const [isViewMode, setIsViewMode] = useState(false);
-  const lastUpdatedRef = useRef<number>(0); // To track server-side updates
 
-  // Fetch initial canvas state and set up polling
-  useEffect(() => {
-    const fetchCanvasState = async () => {
-      try {
-        const response = await fetch('/api/canvas');
-        const data = await response.json();
-        if (data.pixels && Array.isArray(data.pixels)) {
-          setPixels(data.pixels);
-          lastUpdatedRef.current = data.lastUpdated;
-        }
-      } catch (error) {
-        console.error('Failed to fetch canvas state:', error);
-        // Initialize with empty canvas if fetch fails
-        setPixels(Array(CANVAS_WIDTH * CANVAS_HEIGHT).fill('#FFFFFF'));
-      }
-    };
-
-    fetchCanvasState(); // Initial fetch
-
-    const pollingInterval = setInterval(fetchCanvasState, 3000); // Poll every 3 seconds
-    return () => clearInterval(pollingInterval);
-  }, []);
-
-  const placePixel = useCallback(async (x: number, y: number) => {
-    try {
-      const response = await fetch('/api/canvas', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ x, y, color: selectedColor }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to place pixel');
-      }
-
-      // Optimistically update UI, server will confirm via polling
-      setPixels(prevPixels => {
+  const updatePixel = useCallback((x: number, y: number, color: string) => {
+    setPixels(prevPixels => {
         const newPixels = [...prevPixels];
         const index = y * CANVAS_WIDTH + x;
-        newPixels[index] = selectedColor;
+        newPixels[index] = color;
         return newPixels;
-      });
+    });
+  }, []);
 
-    } catch (error) {
-      console.error('Error placing pixel:', error);
-      alert(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  const placePixel = useCallback((x: number, y: number) => {
+    if (Date.now() < cooldownEndTime) {
+      const timerElement = document.getElementById('cooldown-timer');
+      if (timerElement) {
+        timerElement.classList.add('animate-shake');
+        setTimeout(() => timerElement.classList.remove('animate-shake'), 500);
+      }
+      return;
     }
-  }, [selectedColor]);
+
+    updatePixel(x, y, selectedColor);
+    setCooldownEndTime(Date.now() + COOLDOWN_SECONDS * 1000);
+  }, [cooldownEndTime, selectedColor, updatePixel]);
 
   return (
     <div className="w-screen h-screen bg-gray-900 flex flex-col font-sans overflow-hidden relative">
@@ -84,6 +57,7 @@ const App: React.FC = () => {
         <Controls
           selectedColor={selectedColor}
           onColorSelect={setSelectedColor}
+          cooldownEndTime={cooldownEndTime}
           onToggleViewMode={() => setIsViewMode(true)}
         />
       )}
