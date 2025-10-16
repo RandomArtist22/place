@@ -1,0 +1,5 @@
+{
+  "name": "Pixel Place",
+  "description": "A collaborative pixel art canvas game inspired by r/place. Users can place colored pixels on a shared grid, but must wait through a cooldown period between placements.",
+  "requestFramePermissions": []
+}
