@@ -8,4 +8,4 @@ export const COLORS = [
   '#F012BE', '#3D9970', '#39CCCC', '#7FDBFF', '#85144b'
 ];
 
-export const COOLDOWN_SECONDS = 5;
+export const COOLDOWN_SECONDS = 3;

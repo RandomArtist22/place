@@ -13,6 +13,7 @@ dist-ssr
 dist-server
 .env
 *.local
+clear-grid-tool
 
 # Editor directories and files
 .vscode/*

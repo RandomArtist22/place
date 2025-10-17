@@ -69,8 +69,12 @@ const App: React.FC = () => {
         <Canvas 
           pixels={pixels} 
           onPlacePixel={placePixel} 
-          isViewMode={isViewMode} 
+          isViewMode={isViewMode}
         />
+      </div>
+
+      <div className="absolute top-0 left-0 p-4 text-white text-2xl font-bold pixelated-font">
+        Pixel Space <br /> AML
       </div>
 
       {isViewMode ? (

@@ -1,0 +1,8 @@
+.pixelated-font {
+  font-family: 'Press Start 2P', cursive; /* Example pixelated font */
+  /* Fallback for systems without 'Press Start 2P' */
+  font-family: 'Pixel', 'Arial Narrow Bold', sans-serif; 
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
