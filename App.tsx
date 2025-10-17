@@ -80,7 +80,7 @@ const App: React.FC = () => {
       {isViewMode ? (
         <button
           onClick={() => setIsViewMode(false)}
-          className="absolute bottom-6 right-6 bg-cyan-500 hover:bg-cyan-600 text-white rounded-full p-4 shadow-lg transition-transform transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-cyan-400"
+          className="absolute bottom-12 right-6 bg-cyan-500 hover:bg-cyan-600 text-white rounded-full p-4 shadow-lg transition-transform transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-cyan-400"
           aria-label="Enter edit mode"
         >
           <PencilIcon className="w-6 h-6" />
