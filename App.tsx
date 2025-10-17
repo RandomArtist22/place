@@ -4,7 +4,7 @@ import Canvas from './components/Canvas';
 import Controls from './components/Controls';
 import { PencilIcon } from './components/Icons';
 
-const WS_URL = 'ws://localhost:8080'; // WebSocket server URL
+const WS_URL = import.meta.env.VITE_WEBSOCKET_URL || 'ws://localhost:8080'; // WebSocket server URL
 
 const App: React.FC = () => {
   const [pixels, setPixels] = useState<string[]>([]);
