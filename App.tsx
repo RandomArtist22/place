@@ -80,18 +80,20 @@ const App: React.FC = () => {
       {isViewMode ? (
         <button
           onClick={() => setIsViewMode(false)}
-          className="absolute bottom-12 right-6 bg-cyan-500 hover:bg-cyan-600 text-white rounded-full p-4 shadow-lg transition-transform transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-cyan-400"
+          className="absolute top-4 right-4 bg-cyan-500 hover:bg-cyan-600 text-white rounded-full p-4 shadow-lg transition-transform transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-cyan-400"
           aria-label="Enter edit mode"
         >
           <PencilIcon className="w-6 h-6" />
         </button>
       ) : (
-        <Controls
-          selectedColor={selectedColor}
-          onColorSelect={setSelectedColor}
-          cooldownEndTime={cooldownEndTime}
-          onToggleViewMode={() => setIsViewMode(true)}
-        />
+        <div className="absolute right-0 top-0 bottom-0 w-24 sm:w-32 bg-gray-900 bg-opacity-80 backdrop-blur-sm border-l border-gray-700 flex flex-col items-center p-4">
+          <Controls
+            selectedColor={selectedColor}
+            onColorSelect={setSelectedColor}
+            cooldownEndTime={cooldownEndTime}
+            onToggleViewMode={() => setIsViewMode(true)}
+          />
+        </div>
       )}
     </div>
   );
