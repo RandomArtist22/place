@@ -8,7 +8,7 @@ interface ColorPaletteProps {
 
 const ColorPalette: React.FC<ColorPaletteProps> = ({ selectedColor, onColorSelect }) => {
   return (
-    <div className="flex-1 min-w-0">
+    <div className="w-full">
       <div className="flex flex-wrap gap-3 items-center justify-center py-2">
         {COLORS.map((color) => (
           <button

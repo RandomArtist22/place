@@ -25,7 +25,9 @@ const Controls: React.FC<ControlsProps> = (props) => {
       >
         <EyeIcon className="w-6 h-6 text-gray-300" />
       </button>
-      <ColorPalette selectedColor={selectedColor} onColorSelect={onColorSelect} />
+      <div className="w-20 sm:w-24"> {/* Wrapper to control width */}
+        <ColorPalette selectedColor={selectedColor} onColorSelect={onColorSelect} />
+      </div>
     </div>
   );
 };
