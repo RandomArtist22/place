@@ -17,7 +17,7 @@ const Controls: React.FC<ControlsProps> = (props) => {
 
 
   return (
-    <div className="flex flex-col items-center gap-4">
+    <div className="flex flex-row items-center gap-4">
       <button 
         onClick={onToggleViewMode} 
         className="p-2 rounded-full hover:bg-gray-700 transition-colors flex-shrink-0"
@@ -25,7 +25,7 @@ const Controls: React.FC<ControlsProps> = (props) => {
       >
         <EyeIcon className="w-6 h-6 text-gray-300" />
       </button>
-      <div className="w-20 sm:w-24"> {/* Wrapper to control width */}
+      <div className="w-auto"> {/* Wrapper to control width */}
         <ColorPalette selectedColor={selectedColor} onColorSelect={onColorSelect} />
       </div>
     </div>
