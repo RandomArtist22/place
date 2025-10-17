@@ -11,7 +11,19 @@ const App: React.FC = () => {
   const [selectedColor, setSelectedColor] = useState<string>(COLORS[0]);
   const [cooldownEndTime, setCooldownEndTime] = useState<number>(0);
   const [isViewMode, setIsViewMode] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(0); // New state for timer
   const ws = useRef<WebSocket | null>(null);
+
+  useEffect(() => {
+    const updateTimer = () => {
+      const remaining = Math.max(0, Math.ceil((cooldownEndTime - Date.now()) / 1000));
+      setTimeLeft(remaining);
+    };
+
+    updateTimer();
+    const interval = setInterval(updateTimer, 1000);
+    return () => clearInterval(interval);
+  }, [cooldownEndTime]); // Depend on cooldownEndTime
 
   useEffect(() => {
     ws.current = new WebSocket(WS_URL);
@@ -89,22 +101,21 @@ const App: React.FC = () => {
         <Controls
           selectedColor={selectedColor}
           onColorSelect={setSelectedColor}
-          cooldownEndTime={cooldownEndTime}
           onToggleViewMode={() => setIsViewMode(true)}
         />
       )}
       <div id="cooldown-timer" className="absolute top-4 right-28 w-20 sm:w-24 text-center flex-shrink-0">
         <div className="bg-gray-700 h-10 rounded-md flex items-center justify-center">
-          {Date.now() < cooldownEndTime ? (
-            <span className="text-lg sm:text-xl font-mono text-orange-400">{Math.max(0, Math.ceil((cooldownEndTime - Date.now()) / 1000))}s</span>
+          {timeLeft > 0 ? (
+            <span className="text-lg sm:text-xl font-mono text-orange-400">{timeLeft}s</span>
           ) : (
             <span className="text-lg sm:text-xl font-mono text-green-400">Ready</span>
           )}
         </div>
-        {Date.now() < cooldownEndTime &&
+        {timeLeft > 0 &&
             <div 
                 className="absolute top-0 left-0 h-full bg-cyan-500 bg-opacity-50 rounded-md"
-                style={{ width: `${(1 - (Math.max(0, Math.ceil((cooldownEndTime - Date.now()) / 1000)) / COOLDOWN_SECONDS)) * 100}%` }}
+                style={{ width: `${(1 - (timeLeft / COOLDOWN_SECONDS)) * 100}%` }}
             />
         }
       </div>
