@@ -86,14 +86,31 @@ const App: React.FC = () => {
           <PencilIcon className="w-6 h-6" />
         </button>
       ) : (
-        <div className="absolute right-0 top-0 bottom-0 w-24 sm:w-32 bg-gray-900 bg-opacity-80 backdrop-blur-sm border-l border-gray-700 flex flex-col items-center p-4">
-          <Controls
-            selectedColor={selectedColor}
-            onColorSelect={setSelectedColor}
-            cooldownEndTime={cooldownEndTime}
-            onToggleViewMode={() => setIsViewMode(true)}
-          />
-        </div>
+        <>
+          <div className="absolute right-0 top-0 bottom-0 w-24 sm:w-32 bg-gray-900 bg-opacity-80 backdrop-blur-sm border-l border-gray-700 flex flex-col items-center p-4">
+            <Controls
+              selectedColor={selectedColor}
+              onColorSelect={setSelectedColor}
+              cooldownEndTime={cooldownEndTime}
+              onToggleViewMode={() => setIsViewMode(true)}
+            />
+          </div>
+          <div id="cooldown-timer" className="absolute bottom-4 left-4 w-20 sm:w-24 text-center flex-shrink-0">
+            <div className="bg-gray-700 h-10 rounded-md flex items-center justify-center">
+              {Date.now() < cooldownEndTime ? (
+                <span className="text-lg sm:text-xl font-mono text-orange-400">{Math.max(0, Math.ceil((cooldownEndTime - Date.now()) / 1000))}s</span>
+              ) : (
+                <span className="text-lg sm:text-xl font-mono text-green-400">Ready</span>
+              )}
+            </div>
+            {Date.now() < cooldownEndTime &&
+                <div 
+                    className="absolute top-0 left-0 h-full bg-cyan-500 bg-opacity-50 rounded-md"
+                    style={{ width: `${(1 - (Math.max(0, Math.ceil((cooldownEndTime - Date.now()) / 1000)) / COOLDOWN_SECONDS)) * 100}%` }}
+                />
+            }
+          </div>
+        </>
       )}
     </div>
   );
