@@ -95,7 +95,7 @@ const App: React.FC = () => {
               onToggleViewMode={() => setIsViewMode(true)}
             />
           </div>
-          <div id="cooldown-timer" className="absolute bottom-4 left-4 w-20 sm:w-24 text-center flex-shrink-0">
+          <div id="cooldown-timer" className="absolute bottom-24 left-4 w-20 sm:w-24 text-center flex-shrink-0">
             <div className="bg-gray-700 h-10 rounded-md flex items-center justify-center">
               {Date.now() < cooldownEndTime ? (
                 <span className="text-lg sm:text-xl font-mono text-orange-400">{Math.max(0, Math.ceil((cooldownEndTime - Date.now()) / 1000))}s</span>
