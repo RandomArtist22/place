@@ -73,45 +73,41 @@ const App: React.FC = () => {
         />
       </div>
 
-      <div className="absolute top-4 left-4 text-white text-2xl font-bold pixelated-font z-10">
+      <div className="absolute top-4 left-4 text-white text-2xl font-bold pixelated-font">
         Pixel Space <br /> AML
       </div>
 
       {isViewMode ? (
         <button
           onClick={() => setIsViewMode(false)}
-          className="absolute top-4 right-4 bg-cyan-500 hover:bg-cyan-600 text-white rounded-full p-4 shadow-lg transition-transform transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-cyan-400 z-10"
+          className="absolute top-4 right-4 bg-cyan-500 hover:bg-cyan-600 text-white rounded-full p-4 shadow-lg transition-transform transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-cyan-400"
           aria-label="Enter edit mode"
         >
           <PencilIcon className="w-6 h-6" />
         </button>
       ) : (
-        <>
-          <div className="absolute top-0 left-0 right-0 h-24 sm:h-32 bg-gray-900 bg-opacity-80 backdrop-blur-sm border-b border-gray-700 flex items-center justify-center p-4 z-0">
-            <Controls
-              selectedColor={selectedColor}
-              onColorSelect={setSelectedColor}
-              cooldownEndTime={cooldownEndTime}
-              onToggleViewMode={() => setIsViewMode(true)}
-            />
-          </div>
-          <div id="cooldown-timer" className="absolute bottom-4 left-4 w-20 sm:w-24 text-center flex-shrink-0 z-10">
-            <div className="bg-gray-700 h-10 rounded-md flex items-center justify-center">
-              {Date.now() < cooldownEndTime ? (
-                <span className="text-lg sm:text-xl font-mono text-orange-400">{Math.max(0, Math.ceil((cooldownEndTime - Date.now()) / 1000))}s</span>
-              ) : (
-                <span className="text-lg sm:text-xl font-mono text-green-400">Ready</span>
-              )}
-            </div>
-            {Date.now() < cooldownEndTime &&
-                <div 
-                    className="absolute top-0 left-0 h-full bg-cyan-500 bg-opacity-50 rounded-md"
-                    style={{ width: `${(1 - (Math.max(0, Math.ceil((cooldownEndTime - Date.now()) / 1000)) / COOLDOWN_SECONDS)) * 100}%` }}
-                />
-            }
-          </div>
-        </>
+        <Controls
+          selectedColor={selectedColor}
+          onColorSelect={setSelectedColor}
+          cooldownEndTime={cooldownEndTime}
+          onToggleViewMode={() => setIsViewMode(true)}
+        />
       )}
+      <div id="cooldown-timer" className="absolute top-4 right-28 w-20 sm:w-24 text-center flex-shrink-0">
+        <div className="bg-gray-700 h-10 rounded-md flex items-center justify-center">
+          {Date.now() < cooldownEndTime ? (
+            <span className="text-lg sm:text-xl font-mono text-orange-400">{Math.max(0, Math.ceil((cooldownEndTime - Date.now()) / 1000))}s</span>
+          ) : (
+            <span className="text-lg sm:text-xl font-mono text-green-400">Ready</span>
+          )}
+        </div>
+        {Date.now() < cooldownEndTime &&
+            <div 
+                className="absolute top-0 left-0 h-full bg-cyan-500 bg-opacity-50 rounded-md"
+                style={{ width: `${(1 - (Math.max(0, Math.ceil((cooldownEndTime - Date.now()) / 1000)) / COOLDOWN_SECONDS)) * 100}%` }}
+            />
+        }
+      </div>
     </div>
   );
 };

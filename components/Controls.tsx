@@ -17,16 +17,16 @@ const Controls: React.FC<ControlsProps> = (props) => {
 
 
   return (
-    <div className="flex flex-row items-center gap-4">
-      <button 
-        onClick={onToggleViewMode} 
-        className="p-2 rounded-full hover:bg-gray-700 transition-colors flex-shrink-0"
-        aria-label="Enter view mode"
-      >
-        <EyeIcon className="w-6 h-6 text-gray-300" />
-      </button>
-      <div className="w-auto"> {/* Wrapper to control width */}
+    <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-4 bg-gray-900 bg-opacity-80 backdrop-blur-sm border-t border-gray-700">
+      <div className="max-w-7xl mx-auto flex items-start justify-center gap-2 sm:gap-4">
         <ColorPalette selectedColor={selectedColor} onColorSelect={onColorSelect} />
+        <button 
+          onClick={onToggleViewMode} 
+          className="p-2 rounded-full hover:bg-gray-700 transition-colors flex-shrink-0 mt-2"
+          aria-label="Enter view mode"
+        >
+          <EyeIcon className="w-6 h-6 text-gray-300" />
+        </button>
       </div>
     </div>
   );
