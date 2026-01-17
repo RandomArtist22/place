@@ -6,13 +6,12 @@ import { EyeIcon } from './Icons';
 interface ControlsProps {
   selectedColor: string;
   onColorSelect: (color: string) => void;
-  cooldownEndTime: number;
   onToggleViewMode: () => void;
 }
 
 const Controls: React.FC<ControlsProps> = (props) => {
   const {
-    selectedColor, onColorSelect, cooldownEndTime, onToggleViewMode
+    selectedColor, onColorSelect, onToggleViewMode
   } = props;
 
 
@@ -20,8 +19,8 @@ const Controls: React.FC<ControlsProps> = (props) => {
     <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-4 bg-gray-900 bg-opacity-80 backdrop-blur-sm border-t border-gray-700">
       <div className="max-w-7xl mx-auto flex items-start justify-center gap-2 sm:gap-4">
         <ColorPalette selectedColor={selectedColor} onColorSelect={onColorSelect} />
-        <button 
-          onClick={onToggleViewMode} 
+        <button
+          onClick={onToggleViewMode}
           className="p-2 rounded-full hover:bg-gray-700 transition-colors flex-shrink-0 mt-2"
           aria-label="Enter view mode"
         >

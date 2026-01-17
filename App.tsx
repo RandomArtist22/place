@@ -4,7 +4,7 @@ import Canvas from './components/Canvas';
 import Controls from './components/Controls';
 import { PencilIcon } from './components/Icons';
 
-const WS_URL = 'wss://dorathy-conceptional-yawnfully.ngrok-free.dev' ; // WebSocket server URL
+const WS_URL = import.meta.env.VITE_WS_URL || 'ws://localhost:8080';
 
 const App: React.FC = () => {
   const [pixels, setPixels] = useState<string[]>([]);

@@ -14,7 +14,7 @@ const getMidpoint = (p1: Point, p2: Point) => ({ x: (p1.x + p2.x) / 2, y: (p1.y 
 const Canvas: React.FC<CanvasProps> = ({ pixels, onPlacePixel, isViewMode }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  
+
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
   const transform = useRef({ scale: 1, translateX: 0, translateY: 0 });
   const [isPanning, setIsPanning] = useState(false);
@@ -24,7 +24,7 @@ const Canvas: React.FC<CanvasProps> = ({ pixels, onPlacePixel, isViewMode }) => 
   const isInitialTransformSet = useRef(false);
   // FIX: When calling `useRef` without an argument, its `current` property is initialized
   // to `undefined`. The type must therefore include `undefined` to allow this.
-  const animationFrameId = useRef<number | undefined>();
+  const animationFrameId = useRef<number | undefined>(undefined);
 
   const fitScreenScale = useMemo(() => {
     if (canvasSize.width === 0 || canvasSize.height === 0) return 0.1;
@@ -36,13 +36,13 @@ const Canvas: React.FC<CanvasProps> = ({ pixels, onPlacePixel, isViewMode }) => 
   }, [canvasSize]);
 
   const minScale = useMemo(() => fitScreenScale * 0.5, [fitScreenScale]);
-  
+
   const drawCanvas = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const context = canvas.getContext('2d');
     if (!context) return;
-    
+
     const currentTransform = transform.current;
 
     context.imageSmoothingEnabled = false;
@@ -64,20 +64,20 @@ const Canvas: React.FC<CanvasProps> = ({ pixels, onPlacePixel, isViewMode }) => 
     }
 
     if (currentTransform.scale > 5) {
-        context.strokeStyle = 'rgba(0,0,0,0.1)';
-        context.lineWidth = 1 / currentTransform.scale;
-        for (let x = 0; x <= CANVAS_WIDTH; x++) {
-            context.beginPath();
-            context.moveTo(x * PIXEL_SIZE, 0);
-            context.lineTo(x * PIXEL_SIZE, CANVAS_HEIGHT * PIXEL_SIZE);
-            context.stroke();
-        }
-        for (let y = 0; y <= CANVAS_HEIGHT; y++) {
-            context.beginPath();
-            context.moveTo(0, y * PIXEL_SIZE);
-            context.lineTo(CANVAS_WIDTH * PIXEL_SIZE, y * PIXEL_SIZE);
-            context.stroke();
-        }
+      context.strokeStyle = 'rgba(0,0,0,0.1)';
+      context.lineWidth = 1 / currentTransform.scale;
+      for (let x = 0; x <= CANVAS_WIDTH; x++) {
+        context.beginPath();
+        context.moveTo(x * PIXEL_SIZE, 0);
+        context.lineTo(x * PIXEL_SIZE, CANVAS_HEIGHT * PIXEL_SIZE);
+        context.stroke();
+      }
+      for (let y = 0; y <= CANVAS_HEIGHT; y++) {
+        context.beginPath();
+        context.moveTo(0, y * PIXEL_SIZE);
+        context.lineTo(CANVAS_WIDTH * PIXEL_SIZE, y * PIXEL_SIZE);
+        context.stroke();
+      }
     }
     context.restore();
   }, [pixels]);
@@ -92,10 +92,10 @@ const Canvas: React.FC<CanvasProps> = ({ pixels, onPlacePixel, isViewMode }) => 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
-    
+
     const resizeObserver = new ResizeObserver(() => {
-        setCanvasSize({ width: container.clientWidth, height: container.clientHeight });
-        isInitialTransformSet.current = false; // Recalculate transform on resize
+      setCanvasSize({ width: container.clientWidth, height: container.clientHeight });
+      isInitialTransformSet.current = false; // Recalculate transform on resize
     });
     resizeObserver.observe(container);
     return () => resizeObserver.disconnect();
@@ -103,17 +103,17 @@ const Canvas: React.FC<CanvasProps> = ({ pixels, onPlacePixel, isViewMode }) => 
 
   useEffect(() => {
     if (canvasSize.width > 0 && canvasSize.height > 0 && !isInitialTransformSet.current) {
-        const gridWidth = CANVAS_WIDTH * PIXEL_SIZE;
-        const gridHeight = CANVAS_HEIGHT * PIXEL_SIZE;
+      const gridWidth = CANVAS_WIDTH * PIXEL_SIZE;
+      const gridHeight = CANVAS_HEIGHT * PIXEL_SIZE;
 
-        const scale = fitScreenScale * 0.95; 
+      const scale = fitScreenScale * 0.95;
 
-        const translateX = (canvasSize.width - (gridWidth * scale)) / 2;
-        const translateY = (canvasSize.height - (gridHeight * scale)) / 2;
-        
-        transform.current = { scale, translateX, translateY };
-        isInitialTransformSet.current = true;
-        scheduleDraw();
+      const translateX = (canvasSize.width - (gridWidth * scale)) / 2;
+      const translateY = (canvasSize.height - (gridHeight * scale)) / 2;
+
+      transform.current = { scale, translateX, translateY };
+      isInitialTransformSet.current = true;
+      scheduleDraw();
     }
   }, [canvasSize, fitScreenScale, scheduleDraw]);
 
@@ -145,53 +145,53 @@ const Canvas: React.FC<CanvasProps> = ({ pixels, onPlacePixel, isViewMode }) => 
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (e.button === 0) {
-        panStartRef.current = { x: e.clientX, y: e.clientY };
-        setLastPanPoint({ x: e.clientX, y: e.clientY });
+      panStartRef.current = { x: e.clientX, y: e.clientY };
+      setLastPanPoint({ x: e.clientX, y: e.clientY });
     }
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (panStartRef.current && lastPanPoint) {
-        if (!isPanning) {
-            const dist = getDistance(panStartRef.current, { x: e.clientX, y: e.clientY });
-            if (dist > 5) {
-                setIsPanning(true);
-            }
+      if (!isPanning) {
+        const dist = getDistance(panStartRef.current, { x: e.clientX, y: e.clientY });
+        if (dist > 5) {
+          setIsPanning(true);
         }
+      }
 
-        if (isPanning) {
-            const dx = e.clientX - lastPanPoint.x;
-            const dy = e.clientY - lastPanPoint.y;
-            transform.current.translateX += dx;
-            transform.current.translateY += dy;
-            scheduleDraw();
-            setLastPanPoint({ x: e.clientX, y: e.clientY });
-        }
+      if (isPanning) {
+        const dx = e.clientX - lastPanPoint.x;
+        const dy = e.clientY - lastPanPoint.y;
+        transform.current.translateX += dx;
+        transform.current.translateY += dy;
+        scheduleDraw();
+        setLastPanPoint({ x: e.clientX, y: e.clientY });
+      }
     }
   };
 
   const handleMouseUp = (e: React.MouseEvent) => {
     if (e.button === 0 && panStartRef.current) {
-        if (!isPanning) {
-            placePixelAtCoords(e.clientX, e.clientY);
-        }
+      if (!isPanning) {
+        placePixelAtCoords(e.clientX, e.clientY);
+      }
     }
     setIsPanning(false);
     panStartRef.current = null;
     setLastPanPoint(null);
   };
-  
+
   const handleMouseLeave = (e: React.MouseEvent) => {
-      if(panStartRef.current) {
-          handleMouseUp(e);
-      }
+    if (panStartRef.current) {
+      handleMouseUp(e);
+    }
   }
 
   const handleWheel = (e: React.WheelEvent) => {
     e.preventDefault();
     const zoomFactor = 1.1;
     const scaleDelta = e.deltaY < 0 ? zoomFactor : 1 / zoomFactor;
-    
+
     const rect = canvasRef.current!.getBoundingClientRect();
     const mouseX = e.clientX - rect.left;
     const mouseY = e.clientY - rect.top;
@@ -200,66 +200,66 @@ const Canvas: React.FC<CanvasProps> = ({ pixels, onPlacePixel, isViewMode }) => 
     const newScale = Math.max(minScale, Math.min(oldTransform.scale * scaleDelta, 30));
     const newTranslateX = mouseX - (mouseX - oldTransform.translateX) * (newScale / oldTransform.scale);
     const newTranslateY = mouseY - (mouseY - oldTransform.translateY) * (newScale / oldTransform.scale);
-    
+
     transform.current = { scale: newScale, translateX: newTranslateX, translateY: newTranslateY };
     scheduleDraw();
   };
-  
+
   const handleTouchStart = (e: React.TouchEvent) => {
     if (e.touches.length === 1) {
-        panStartRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-        setLastPanPoint(panStartRef.current);
+      panStartRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      setLastPanPoint(panStartRef.current);
     } else if (e.touches.length === 2) {
-        panStartRef.current = null;
-        const p1 = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-        const p2 = { x: e.touches[1].clientX, y: e.touches[1].clientY };
-        pinchRef.current = { dist: getDistance(p1, p2) };
+      panStartRef.current = null;
+      const p1 = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      const p2 = { x: e.touches[1].clientX, y: e.touches[1].clientY };
+      pinchRef.current = { dist: getDistance(p1, p2) };
     }
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
     e.preventDefault();
     if (e.touches.length === 1 && lastPanPoint) {
-        const touch = e.touches[0];
-        const dx = touch.clientX - lastPanPoint.x;
-        const dy = touch.clientY - lastPanPoint.y;
-        transform.current.translateX += dx;
-        transform.current.translateY += dy;
-        scheduleDraw();
-        setLastPanPoint({ x: touch.clientX, y: touch.clientY });
+      const touch = e.touches[0];
+      const dx = touch.clientX - lastPanPoint.x;
+      const dy = touch.clientY - lastPanPoint.y;
+      transform.current.translateX += dx;
+      transform.current.translateY += dy;
+      scheduleDraw();
+      setLastPanPoint({ x: touch.clientX, y: touch.clientY });
     } else if (e.touches.length === 2 && pinchRef.current) {
-        const p1 = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-        const p2 = { x: e.touches[1].clientX, y: e.touches[1].clientY };
-        const newDist = getDistance(p1, p2);
-        const midPoint = getMidpoint(p1, p2);
-        const scale = newDist / pinchRef.current.dist;
+      const p1 = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      const p2 = { x: e.touches[1].clientX, y: e.touches[1].clientY };
+      const newDist = getDistance(p1, p2);
+      const midPoint = getMidpoint(p1, p2);
+      const scale = newDist / pinchRef.current.dist;
 
-        const rect = canvasRef.current!.getBoundingClientRect();
-        const mouseX = midPoint.x - rect.left;
-        const mouseY = midPoint.y - rect.top;
-        
-        const oldTransform = transform.current;
-        const newScale = Math.max(minScale, Math.min(oldTransform.scale * scale, 30));
-        const newTranslateX = mouseX - (mouseX - oldTransform.translateX) * (newScale / oldTransform.scale);
-        const newTranslateY = mouseY - (mouseY - oldTransform.translateY) * (newScale / oldTransform.scale);
-        
-        transform.current = { scale: newScale, translateX: newTranslateX, translateY: newTranslateY };
-        scheduleDraw();
-        pinchRef.current.dist = newDist;
+      const rect = canvasRef.current!.getBoundingClientRect();
+      const mouseX = midPoint.x - rect.left;
+      const mouseY = midPoint.y - rect.top;
+
+      const oldTransform = transform.current;
+      const newScale = Math.max(minScale, Math.min(oldTransform.scale * scale, 30));
+      const newTranslateX = mouseX - (mouseX - oldTransform.translateX) * (newScale / oldTransform.scale);
+      const newTranslateY = mouseY - (mouseY - oldTransform.translateY) * (newScale / oldTransform.scale);
+
+      transform.current = { scale: newScale, translateX: newTranslateX, translateY: newTranslateY };
+      scheduleDraw();
+      pinchRef.current.dist = newDist;
     }
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
     if (panStartRef.current && lastPanPoint) {
-        const distMoved = getDistance(panStartRef.current, lastPanPoint);
-        if (distMoved < 10) {
-            placePixelAtCoords(panStartRef.current.x, panStartRef.current.y);
-        }
+      const distMoved = getDistance(panStartRef.current, lastPanPoint);
+      if (distMoved < 10) {
+        placePixelAtCoords(panStartRef.current.x, panStartRef.current.y);
+      }
     }
     if (e.touches.length < 2) pinchRef.current = null;
     if (e.touches.length < 1) {
-        panStartRef.current = null;
-        setLastPanPoint(null);
+      panStartRef.current = null;
+      setLastPanPoint(null);
     }
   };
 
@@ -269,9 +269,8 @@ const Canvas: React.FC<CanvasProps> = ({ pixels, onPlacePixel, isViewMode }) => 
         ref={canvasRef}
         width={canvasSize.width}
         height={canvasSize.height}
-        className={`bg-gray-800 block ${
-          isViewMode ? 'cursor-grab' : (isPanning ? 'cursor-grabbing' : 'cursor-crosshair')
-        }`}
+        className={`bg-gray-800 block ${isViewMode ? 'cursor-grab' : (isPanning ? 'cursor-grabbing' : 'cursor-crosshair')
+          }`}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
