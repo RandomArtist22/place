@@ -121,7 +121,7 @@ const Canvas: React.FC<CanvasProps> = ({ pixels, onPlacePixel, isViewMode }) => 
     scheduleDraw();
   }, [pixels, scheduleDraw]);
 
-  const getCanvasPoint = (clientX: number, clientY: number): Point => {
+  const getCanvasPoint = useCallback((clientX: number, clientY: number): Point => {
     const canvas = canvasRef.current;
     if (!canvas) return { x: 0, y: 0 };
     const rect = canvas.getBoundingClientRect();
@@ -130,9 +130,9 @@ const Canvas: React.FC<CanvasProps> = ({ pixels, onPlacePixel, isViewMode }) => 
       x: (clientX - rect.left - currentTransform.translateX) / currentTransform.scale,
       y: (clientY - rect.top - currentTransform.translateY) / currentTransform.scale,
     };
-  };
+  }, []);
 
-  const placePixelAtCoords = (clientX: number, clientY: number) => {
+  const placePixelAtCoords = useCallback((clientX: number, clientY: number) => {
     if (isViewMode) return;
     const point = getCanvasPoint(clientX, clientY);
     const x = Math.floor(point.x / PIXEL_SIZE);
@@ -141,16 +141,16 @@ const Canvas: React.FC<CanvasProps> = ({ pixels, onPlacePixel, isViewMode }) => 
     if (x >= 0 && x < CANVAS_WIDTH && y >= 0 && y < CANVAS_HEIGHT) {
       onPlacePixel(x, y);
     }
-  };
+  }, [isViewMode, getCanvasPoint, onPlacePixel]);
 
-  const handleMouseDown = (e: React.MouseEvent) => {
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
     if (e.button === 0) {
       panStartRef.current = { x: e.clientX, y: e.clientY };
       setLastPanPoint({ x: e.clientX, y: e.clientY });
     }
-  };
+  }, []);
 
-  const handleMouseMove = (e: React.MouseEvent) => {
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
     if (panStartRef.current && lastPanPoint) {
       if (!isPanning) {
         const dist = getDistance(panStartRef.current, { x: e.clientX, y: e.clientY });
@@ -168,9 +168,9 @@ const Canvas: React.FC<CanvasProps> = ({ pixels, onPlacePixel, isViewMode }) => 
         setLastPanPoint({ x: e.clientX, y: e.clientY });
       }
     }
-  };
+  }, [lastPanPoint, isPanning, scheduleDraw]);
 
-  const handleMouseUp = (e: React.MouseEvent) => {
+  const handleMouseUp = useCallback((e: React.MouseEvent) => {
     if (e.button === 0 && panStartRef.current) {
       if (!isPanning) {
         placePixelAtCoords(e.clientX, e.clientY);
@@ -179,15 +179,15 @@ const Canvas: React.FC<CanvasProps> = ({ pixels, onPlacePixel, isViewMode }) => 
     setIsPanning(false);
     panStartRef.current = null;
     setLastPanPoint(null);
-  };
+  }, [isPanning, placePixelAtCoords]);
 
-  const handleMouseLeave = (e: React.MouseEvent) => {
+  const handleMouseLeave = useCallback((e: React.MouseEvent) => {
     if (panStartRef.current) {
       handleMouseUp(e);
     }
-  }
+  }, [handleMouseUp]);
 
-  const handleWheel = (e: React.WheelEvent) => {
+  const handleWheel = useCallback((e: React.WheelEvent) => {
     e.preventDefault();
     const zoomFactor = 1.1;
     const scaleDelta = e.deltaY < 0 ? zoomFactor : 1 / zoomFactor;
@@ -203,9 +203,9 @@ const Canvas: React.FC<CanvasProps> = ({ pixels, onPlacePixel, isViewMode }) => 
 
     transform.current = { scale: newScale, translateX: newTranslateX, translateY: newTranslateY };
     scheduleDraw();
-  };
+  }, [minScale, scheduleDraw]);
 
-  const handleTouchStart = (e: React.TouchEvent) => {
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
     if (e.touches.length === 1) {
       panStartRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
       setLastPanPoint(panStartRef.current);
@@ -215,9 +215,9 @@ const Canvas: React.FC<CanvasProps> = ({ pixels, onPlacePixel, isViewMode }) => 
       const p2 = { x: e.touches[1].clientX, y: e.touches[1].clientY };
       pinchRef.current = { dist: getDistance(p1, p2) };
     }
-  };
+  }, []);
 
-  const handleTouchMove = (e: React.TouchEvent) => {
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
     e.preventDefault();
     if (e.touches.length === 1 && lastPanPoint) {
       const touch = e.touches[0];
@@ -247,9 +247,9 @@ const Canvas: React.FC<CanvasProps> = ({ pixels, onPlacePixel, isViewMode }) => 
       scheduleDraw();
       pinchRef.current.dist = newDist;
     }
-  };
+  }, [lastPanPoint, minScale, scheduleDraw]);
 
-  const handleTouchEnd = (e: React.TouchEvent) => {
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
     if (panStartRef.current && lastPanPoint) {
       const distMoved = getDistance(panStartRef.current, lastPanPoint);
       if (distMoved < 10) {
@@ -261,7 +261,7 @@ const Canvas: React.FC<CanvasProps> = ({ pixels, onPlacePixel, isViewMode }) => 
       panStartRef.current = null;
       setLastPanPoint(null);
     }
-  };
+  }, [lastPanPoint, placePixelAtCoords]);
 
   return (
     <div ref={containerRef} className="w-full h-full touch-none">

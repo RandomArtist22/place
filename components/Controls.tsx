@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import ColorPalette from './ColorPalette';
-import { COOLDOWN_SECONDS } from '../constants';
 import { EyeIcon } from './Icons';
 
 interface ControlsProps {
@@ -9,12 +8,7 @@ interface ControlsProps {
   onToggleViewMode: () => void;
 }
 
-const Controls: React.FC<ControlsProps> = (props) => {
-  const {
-    selectedColor, onColorSelect, onToggleViewMode
-  } = props;
-
-
+const Controls: React.FC<ControlsProps> = ({ selectedColor, onColorSelect, onToggleViewMode }) => {
   return (
     <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-4 bg-gray-900 bg-opacity-80 backdrop-blur-sm border-t border-gray-700">
       <div className="max-w-7xl mx-auto flex items-start justify-center gap-2 sm:gap-4">
