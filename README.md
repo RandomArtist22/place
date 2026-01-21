@@ -1,77 +1,71 @@
-# Pixel Space AML 🎨
+# Pixel Space AML
 
-A real-time, collaborative pixel art canvas where users can place pixels on a shared grid. Built with performance and interactivity in mind.
+A real-time collaborative pixel art canvas built with React, TypeScript, and WebSockets.
 
-## ✨ Features
+## Features
 
-- **Real-time Collaboration**: Watch the canvas evolve live as users place pixels.
-- **WebSocket Powered**: Instant updates across all connected clients.
-- **Persistent State**: Canvas state is saved to a Turso (LibSQL) database.
-- **Cooldown System**: Prevents spamming and encourages strategic placement.
-- **Responsive Design**: Works on desktop and mobile.
+- **Real-time Collaboration** — Live updates across all connected clients via WebSocket
+- **Persistent Storage** — Canvas state persisted in Turso (LibSQL)
+- **Cooldown System** — Rate limiting to encourage strategic pixel placement
+- **Cross-platform** — Responsive design for desktop and mobile
 
-## 🛠️ Tech Stack
+## Tech Stack
 
-- **Frontend**: React, Vite, TailwindCSS
-- **Backend**: Node.js, `ws` (WebSocket)
-- **Database**: Turso (LibSQL)
-- **Language**: TypeScript
+| Layer    | Technology                   |
+|----------|------------------------------|
+| Frontend | React, Vite, TailwindCSS     |
+| Backend  | Node.js, ws                  |
+| Database | Turso (LibSQL)               |
+| Language | TypeScript                   |
 
-## 🚀 Getting Started
+## Quick Start
 
 ### Prerequisites
 
-- Node.js (v16+)
+- Node.js v16+
 - npm or yarn
 
-### Installation
+### Setup
 
-1.  **Clone the repository**
-    ```bash
-    git clone <repository-url>
-    cd place
-    ```
+```bash
+# Clone and install
+git clone <repository-url>
+cd place
+npm install
 
-2.  **Install dependencies**
-    ```bash
-    npm install
-    ```
+# Configure environment
+cp .env.example .env
+```
 
-3.  **Environment Setup**
-    Create a `.env` file in the root directory based on `.env.example`:
-    ```bash
-    cp .env.example .env
-    ```
-    
-    Fill in your Turso credentials and WebSocket URL:
-    ```env
-    TURSO_DATABASE_URL=libsql://...
-    TURSO_AUTH_TOKEN=...
-    VITE_WS_URL=ws://localhost:8080 # or your deployed WS URL
-    ```
+Update `.env` with your credentials:
 
-4.  **Run the Backend**
-    ```bash
-    npx ts-node server.ts
-    ```
+```env
+TURSO_DATABASE_URL=libsql://...
+TURSO_AUTH_TOKEN=...
+VITE_WS_URL=ws://localhost:8080
+```
 
-5.  **Run the Frontend**
-    In a separate terminal:
-    ```bash
-    npm run dev
-    ```
+### Run
 
-## 🎮 How to Play
+```bash
+# Terminal 1: Backend
+npx ts-node server.ts
 
-1.  Select a color from the palette.
-2.  Click on a pixel on the grid to paint it.
-3.  Wait for the cooldown to reset before painting again.
-4.  Switch to "View Mode" to inspect the artwork without accidental clicks.
+# Terminal 2: Frontend
+npm run dev
+```
 
-## 🤝 Contributing
+## Usage
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+1. Select a color from the palette
+2. Click any pixel on the grid to paint
+3. Wait for cooldown before placing another pixel
+4. Toggle View Mode to navigate without accidental edits
 
-## 📄 License
+## Contributing
 
-This project is open source and available under the [MIT License](LICENSE).
+Contributions welcome. Submit a pull request or open an issue.
+
+## License
+
+[MIT License](LICENSE)
